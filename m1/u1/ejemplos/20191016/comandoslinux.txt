@@ -1,0 +1,60 @@
+permisos
+d, rwx  rwx  rwx
+dueño  grupo resto de usuarios
+
+r = 4
+w = 2
+x = 1
+
+chmod 766
+rwx  rw  rw
+
+ls -la lista archivos con las propiedades
+
+touch permisos.txt
+ls -la permisos.txt
+
+chmod 666 permisos.txt
+
+	PROPIETARIO	GRUPO	RESTO 
+	1	2	3
+654	rw	rx	r
+766	rwx	rw	rw
+777	rwx	rwx	rwx
+520	rx	w	
+764	rwx	rw	r
+440	r	r	
+
+copiar archivos a otra ruta
+cp calendario.jpg compiladores_pascal
+
+
+mover carpeta de una ruta a otra
+
+mv compiladores_pascal /home/andres/matematicas/curso_01/analisis/
+
+borrar carpeta analisis
+rm -r /home/andres/matematicas/curso_01/analisis/
+
+renombrar nombre de un archivo
+
+mv goles.txt goles2019.txt
+
+
+mover carpetas a otra carpeta
+
+mv Maradona/ Messi/ ~/Escritorio/Paises/España
+
+listar archivos que comiencen por una letra "a" ascendente
+
+ls -d a*
+
+listar archivos que comiencen por una letra "a" descendente
+
+ls -dr a*
+
+listar las carpetas que empiecen por tt y tengan 5 caracteres
+
+ls tt???
+
+tim
