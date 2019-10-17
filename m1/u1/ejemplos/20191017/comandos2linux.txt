@@ -1,0 +1,22 @@
+more /etc/passwd
+
+poder hacer de todo crear borrar etc
+
+sudo su
+
+cambiar de usuario
+su
+
+agregar grupos
+addgroup nombre
+
+cambiar de grupo a un archivo 
+
+chgrp -R grupo archivo
+
+ver grupos y usuarios
+cat /etc/group
+
+cambiar de propietario y grupo archivo
+chown -R andres:andres empelados.txt
+
