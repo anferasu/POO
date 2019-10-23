@@ -8,10 +8,14 @@ Algoritmo sin_titulo
 	Leer minutos
 	Escribir 'Digitar segundos'
 	Leer segu
+	segu <- seg + 1
 	Si segu>59 Entonces
-		segundos <- 0
-	SiNo
 		segu <- 0
+		Si minutos>60 Entonces
+			minutos <- 0
+			horas <- horas + 1
+		FinSi
+	SiNo
 		minutos <- minutos+1
 	FinSi
 	Escribir 'La hora es: ',horas,':',minutos,':',segu

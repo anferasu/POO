@@ -2,15 +2,15 @@ Algoritmo sin_titulo
 	Definir digito,resultado Como Caracter
 	Escribir 'digito'
 	Leer digito
-	Si digito='o' Entonces
-		Resultado <- 'o'
+	Si digito='a' Entonces
+		resultado <- 'a'
 	SiNo
 		Si digito='b' Entonces
-			Resultado <- 'b'
+			resultado <- 'b'
 		SiNo
-			Resultado <- 'no es el digito correcto'
+			resultado <- 'no es el digito correcto'
 		FinSi
 	FinSi
-	Escribir 'Resultado: ' resultado
+	Escribir 'Resultado: ',resultado
 FinAlgoritmo
 
