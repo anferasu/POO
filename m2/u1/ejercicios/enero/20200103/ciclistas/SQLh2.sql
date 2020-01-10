@@ -1,4 +1,4 @@
-
+﻿
 SELECT
   COUNT(c.nombre)
   FROM
@@ -92,16 +92,16 @@ SELECT
 
 --****1.1
 SELECT 
-  c.edad
+DISTINCT  c.edad
   FROM
   PUBLIC.ciclista c
-  WHERE c.nomequipo ='Banesto'
+  WHERE c.nomequipo ='Banesto';
   ORDER BY c.edad ASC;
 --11
 
 --*****1.2
 SELECT
-  c.edad, c.nomequipo
+ DISTINCT c.edad, c.nomequipo
   FROM
   PUBLIC.ciclista c
   WHERE c.nomequipo ='Banesto' OR c.nomequipo ='Navigare'
@@ -120,7 +120,7 @@ SELECT
 --*****1.5
 
 SELECT
-  SUBSTRING(c.nomequipo,1,1) AS "Inicial_Nombre_Equipo"
+  distinct SUBSTRING(c.nomequipo,1,1) AS "Inicial_Nombre_Equipo"
   FROM
   PUBLIC.ciclista c
   WHERE c.nombre LIKE 'R%';
@@ -129,31 +129,19 @@ SELECT
 --****1.6
 
 SELECT
-  l.código
+  e.numetapa
   FROM
   public.etapa e
-  INNER JOIN
-  public.lleva l
-  ON e.numetapa = l.numetapa  
   WHERE e.salida=e.llegada;
 --16
 
 --****1.7
 
 SELECT
-  DISTINCT e.dorsal, l.código
+  e.numetapa
   FROM
-  PUBLIC.etapa e
-  INNER JOIN 
-  public.lleva l
-  ON
-  e.dorsal=l.dorsal
-  INNER JOIN
-  public.maillot m
-  ON
-  l.código = m.código 
-  WHERE e.salida <> e.llegada
-  ORDER BY e.dorsal ASC;
+  public.etapa e
+  WHERE e.salida<>e.llegada AND e.dorsal IS NOT NULL;
   
   --7
   
@@ -161,7 +149,7 @@ SELECT
   
 
   SELECT
-    * 
+    p.nompuerto 
     FROM
     public.puerto p
     WHERE p.altura BETWEEN 1000 AND 2000 OR p.altura > 2400;
@@ -171,27 +159,19 @@ SELECT
 --*******1.9
 
   SELECT
-    c.dorsal 
+   DISTINCT p.dorsal 
     FROM
-    public.ciclista c
-    INNER JOIN
     public.puerto p
-    ON
-    c.dorsal=p.dorsal
     WHERE p.altura BETWEEN 1000 AND 2000 OR p.altura > 2400
-    ORDER BY c.dorsal ASC;
+    ORDER BY p.dorsal ASC;
 --11	
 
 --******1.10
 
 SELECT
-  COUNT(c.nombre)
-  FROM
-  PUBLIC.ciclista c
-  INNER JOIN 
-  PUBLIC.etapa e
-  ON
-  c.dorsal=e.dorsal;
+  COUNT(DISTINCT c.dorsal) AS dorsal
+ FROM
+ puBLIC.etapa e
   
 select 
 count(*)
@@ -210,7 +190,7 @@ SELECT
   e.numetapa = p.numetapa;
 
   SELECT
-    p.numetapa
+   COUNT(distinct p.numetapa)
     FROM 
     PUBLIC.puerto p;
 
@@ -224,14 +204,11 @@ SELECT
   c.dorsal = p.dorsal;
 
 SELECT
-  l.código
+  p.numetapa, COUNT(*)AS nPuertos
   FROM
-  PUBLIC.lleva l
-  INNER JOIN
-  PUBLIC.puerto p
-  ON
-  l.numetapa = p.numetapa;
-
+  PUBLIC.puerto p 
+  GROUP BY p.numetapa
+ 
   SELECT
     l.código, COUNT(p.nompuerto)
     FROM
@@ -248,12 +225,39 @@ SELECT
   FROM
   PUBLIC.puerto p;
 
+SELECT
+  TRUNC (AVG(p.altura),2)
+  FROM
+  PUBLIC.puerto p;
+
 
 SELECT
   SUM(p.altura)/COUNT(p.altura) 
   FROM
   PUBLIC.puerto p;
 
+SELECT
+  numetapa FROM puerto p
+  GROUP BY p.numetapa
+  HAVING AVG(altura)>1500
+
+SELECT
+  COUNT (*) AS retapa FROM numetapa FROM (SELECT numeroetapa FROM puerto p GROUP BY 
+  p.numetapa
+  HAVING AVG(altura)>1500
+
+--.1.17
+  SELECT l.dorsal, COUNT(*) AS numero
+    FROM lleva l GROUP BY l.dorsal
+
+--.1.18
+  SELECT l.dorsal, l.código,
+    COUNT(*) AS numero
+    FROM lleva l GROUP BY l.dorsal, l.código
+
+--1.19
 
 
-
+SELECT l.dorsal, l.numetapa, COUNT(*) AS numero
+  FROM lleva l
+  GROUP BY l.dorsal, l.numetapa

@@ -1,4 +1,5 @@
 ﻿
+
 -- hoja 1 consultass de seleccion
 --1.1 Listar las edades de los ciclistas (sin repetidos)
 SELECT
