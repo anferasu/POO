@@ -72,15 +72,13 @@ WHERE m.color = 'amarillo'
 
 
 --1.7
-SELECT DISTINCT e.dorsal 
+SELECT DISTINCT l.dorsal 
 FROM
 public.lleva l
 INNER JOIN
 public.etapa e
-ON l.numetapa = e.numetapa
-INNER JOIN
-public.maillot m
-ON l.código = m.código
+ON l.dorsal = e.dorsal
+
 
 
 --1.8
@@ -93,7 +91,7 @@ public.puerto p
 ON e.numetapa = p.numetapa
 
 --1.9
-SELECT distinct e.kms FROM
+SELECT distinct e.kms,e.numetapa FROM
 public.etapa e
 INNER JOIN
 public.ciclista c
@@ -106,11 +104,8 @@ e.numetapa= p.numetapa
 WHERE c.nomequipo = 'Banesto'
 
 --1.10
-SELECT COUNT(*)
-FROM public.ciclista c
-INNER JOIN
+SELECT COUNT(DISTINCT e.dorsal) from
 public.etapa e
-ON C.dorsal = e.dorsal
 INNER JOIN
 public.puerto p
 ON
@@ -127,16 +122,16 @@ WHERE c.nomequipo = 'Banesto'
 
 --1.12
 
-SELECT p.numetapa 
+SELECT DISTINCT e.numetapa 
 FROM
 public.puerto p
 INNER JOIN
-public.ciclista c
-ON p.dorsal = c.dorsal
-INNER JOIN
 public.etapa e
 ON e.numetapa = p.numetapa
-WHERE c.nomequipo = 'Banesto' AND e.kms > 200
+INNER JOIN
+public.ciclista c
+ON e.dorsal = c.dorsal
+WHERE c.nomequipo = 'Banesto' AND e.kms >= 200
 
 
 -----------------------------------------------------------------
@@ -144,6 +139,17 @@ WHERE c.nomequipo = 'Banesto' AND e.kms > 200
 SELECT c.nombre, c.edad
 FROM PUBLIC.ciclista c 
 WHERE c.dorsal NOT IN (SELECT e.dorsal FROM public.etapa e)
+
+SELECT c.nombre, c.edad
+FROM PUBLIC.ciclista c 
+WHERE NOT exists (SELECT null FROM public.etapa e WHERE c.dorsal=e.dorsal)
+
+SELECT c.nombre, c.edad
+FROM PUBLIC.ciclista c
+LEFT JOIN
+public.etapa e
+ON c.dorsal = e.dorsal       
+WHERE e.dorsal IS null
 
 --1.2
 SELECT c.nombre, c.edad
@@ -157,15 +163,50 @@ public.ciclista c
 ON e.nomequipo = c.nomequipo
 WHERE c.dorsal NOT IN (SELECT e.dorsal FROM public.etapa e)
 
---1.4
-SELECT DISTINCT c.dorsal, c.nombre
-FROM
-public.ciclista c
-INNER JOIN 
+--1.4 
+
+SELECT distinct c.dorsal, c.nombre FROM PUBLIC.ciclista c 
+INNER JOIN
 public.lleva l
 ON c.dorsal = l.dorsal
-INNER JOIN
-public.maillot m
-ON l.código = m.código
-WHERE l.código NOT IN (SELECT m.código FROM PUBLIC.maillot m)
+WHERE c.dorsal NOT IN (SELECT e.dorsal FROM PUBLIC.etapa e)
 
+
+--1.5 
+SELECT c.dorsal FROM PUBLIC.ciclista c EXCEPT
+SELECT DISTINCT l.dorsal FROM public.maillot m INNER JOIN public.lleva l ON m.código = l.código WHERE m.color = 'amarillo'
+
+
+--1.6
+
+SELECT e.numetapa
+FROM PUBLIC.etapa e 
+WHERE NOT exists (SELECT null FROM public.puerto p WHERE e.numetapa=p.numetapa)
+
+--1.7
+SELECT trunc (AVG(e.kms),2)
+FROM PUBLIC.etapa e 
+WHERE NOT exists (SELECT null FROM public.puerto p WHERE e.numetapa=p.numetapa)
+
+--1.8
+
+SELECT COUNT(DISTINCT c.dorsal) FROM
+public.ciclista c
+WHERE c.dorsal NOT IN (SELECT e.dorsal FROM public.etapa e)
+
+--1.9
+SELECT DISTINCT e.dorsal from
+public.etapa e
+WHERE NOT exists (SELECT null FROM public.puerto p WHERE e.numetapa = p.numetapa)
+
+--1.10
+
+
+
+--equipos cuyos componentes halan ganados todos alguna etapa
+SELECT DISTINCT e.nomequipo
+   FROM PUBLIC.equipo e 
+  WHERE NOT EXISTS (SELECT null FROM PUBLIC.ciclista c WHERE e.nomequipo = c.nomequipo)
+
+SELECT * FROM equipo e LEFT JOIN ciclista c ON e.nomequipo = c.nomequipo
+  WHERE c.nomequipo IS null
