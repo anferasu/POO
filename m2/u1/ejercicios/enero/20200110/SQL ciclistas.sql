@@ -203,10 +203,25 @@ WHERE NOT exists (SELECT null FROM public.puerto p WHERE e.numetapa = p.numetapa
 
 
 
---equipos cuyos componentes halan ganados todos alguna etapa
+--equipos cuyos componentes hallan ganados todos alguna etapa*/
 SELECT DISTINCT e.nomequipo
    FROM PUBLIC.equipo e 
-  WHERE NOT EXISTS (SELECT null FROM PUBLIC.ciclista c WHERE e.nomequipo = c.nomequipo)
+  WHERE NOT EXISTS (SELECT null FROM PUBLIC.ciclista c WHERE e.nomequipo = c.nomequipo);
 
 SELECT * FROM equipo e LEFT JOIN ciclista c ON e.nomequipo = c.nomequipo
-  WHERE c.nomequipo IS null
+  WHERE c.nomequipo IS NULL;
+
+SELECT eq.nomequipo FROM equipo eq EXCEPT
+SELECT DISTINCT e1.nomequipo FROM equipo e1  LEFT JOIN ciclista c ON c.nomequipo = e1.nomequipo
+  LEFT JOIN etapa e ON e.dorsal = c.dorsal WHERE e.dorsal IS NULL;
+
+
+SELECT * from
+(SELECT c.nomequipo, count(DISTINCT c.dorsal) AS numciclistas FROM ciclista c
+  INNER JOIN etapa e USING (dorsal) GROUP BY c.nomequipo) AS ganadores
+  INNER JOIN 
+  (SELECT c.nomequipo, COUNT(*) AS numCiclistas2 FROM ciclista c GROUP BY c.nomequipo) AS corredores
+    ON ganadores.nomequipo = corredores.nomequipo
+    WHERE corredores.numCiclistas2 = ganadores.numciclistas
+
+
