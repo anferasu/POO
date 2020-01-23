@@ -1,3 +1,5 @@
+--************************************Consultas Multitablas (Composicion interna)*************************************
+
 --1
 
 --2
@@ -21,72 +23,74 @@ SELECT f.nombre,p.nombre, p.precio FROM fabricante f, producto p
 WHERE f.codigo = p.codigo_fabricante AND 
 p.precio >= 180 ORDER BY p.precio DESC, p.nombre ASC;
 
---1.1
+--************************************Consultas Multitablas (Composicion externa)*************************************
+--1
 SELECT f.nombre,p.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante;
 
---1.2
+--2
 SELECT f.nombre,p.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
 WHERE p.nombre IS NULL;
 
---1.1.1
+--************************************Consultas Resumen*************************************
+--1
 SELECT  COUNT(*) AS total_productos FROM producto p1; 
 
---1.1.2
+--2
 SELECT p1.codigo_fabricante, COUNT(p1.codigo_fabricante) AS total_productos FROM producto p1
 GROUP BY p1.codigo_fabricante ORDER BY p1.codigo_fabricante ASC;
 
---1.1.3
+--3
 SELECT  * FROM producto p1
 WHERE p1.precio = (SELECT MIN(p1.precio)FROM producto p1);
 
---1.1.4
+--4
 SELECT  * FROM producto p1
 WHERE p1.precio = (SELECT Max(p1.precio)FROM producto p1);
 
---1.1.6
+--6
 SELECT  SUM(p1.precio) FROM producto p1;
 
---1.1.7
+--7
 
 SELECT f.nombre, MIN(p1.precio) FROM producto p1, fabricante f
 WHERE f.codigo= p1.codigo_fabricante AND f.nombre = 'Asus' 
 GROUP BY f.nombre;
 
---1.1.8
+--8
 SELECT MAX(p.precio)AS Maximo, MIN(P.precio) AS precio, AVG(p.precio) AS Media, SUM(p.precio) AS Suma 
 FROM fabricante f INNER JOIN producto p ON f.codigo = p.codigo_fabricante
 WHERE f.nombre = 'Crucial';
 
---1.1.9
+--9
 SELECT f.nombre, MAX(p.precio)AS Maximo, MIN(P.precio) AS precio, AVG(p.precio) AS Media, SUM(p.precio) AS Suma FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
 GROUP BY f.nombre;
 
---1.1.10
+--10
 SELECT f.nombre, MAX(p.precio)AS Maximo, MIN(P.precio) AS precio, AVG(p.precio) AS Media, SUM(p.precio) AS Suma FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
 GROUP BY f.nombre
 HAVING AVG(p.precio) > 200;
 
---1.1.11
+--11
 --la misma 1.1.10
 
---1.1.12
+--12
 
 SELECT f.nombre, p1.codigo_fabricante, COUNT(p1.codigo_fabricante) AS total_productos FROM producto p1,fabricante f
 WHERE f.codigo = p1.codigo_fabricante AND p1.precio >=180
 GROUP BY f.nombre, p1.codigo_fabricante ORDER BY p1.codigo_fabricante ASC;
 
---1.1.13
+--13
 SELECT f.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
 GROUP BY f.nombre
 HAVING AVG(p.precio) > 150;
 
---1.1.14
+--14
 SELECT f.nombre, COUNT(p1.codigo_fabricante) AS total FROM producto p1,fabricante f
 WHERE f.codigo = p1.codigo_fabricante 
 GROUP BY f.nombre
 HAVING COUNT(p1.codigo_fabricante) >= 2;
 
---1.1.15
+--15
 
 SELECT f.nombre, count (p.nombre)  FROM fabricante f 
 LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
@@ -94,31 +98,92 @@ where  p.precio is null
 or p.precio >=220 
 group by f.nombre;
 
---1.1.16
+--16
 
 SELECT f.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
 GROUP BY f.nombre
 HAVING sum(p.precio) > 1000;
 
---1.1.1.1
-select f.nombre,p.nombre from fabricante f, producto p
-where f.codigo = p.codigo_fabricante and f.nombre ='Lenovo';
 
---1.1.1.2
-SELECT f.nombre FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
-GROUP BY f.nombre
-HAVING sum(p.precio) > 1000;
+--************************************subconsultas (Where)*************************************
+
+--1
+select * from producto p 
+where p.codigo_fabricante = (SELECT f.codigo FROM fabricante f WHERE f.nombre ='Lenovo');
+
+--2
+SELECT * FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante
+WHERE p.precio = (SELECT MAX(p.precio) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE f.nombre = 'Lenovo');
+
+--3
+SELECT * FROM producto p1 
+WHERE p1.precio = (SELECT MAX(p.precio) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE f.nombre = 'Lenovo');
+
+--4
+SELECT * FROM producto p1 
+WHERE p1.precio = (SELECT MIN(p.precio) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE f.nombre = 'Hewlett-Packard');
+
+--5
+SELECT * FROM producto p1 
+WHERE p1.precio >= (SELECT MAX(p.precio) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE f.nombre = 'Lenovo');
+
+--6
+SELECT * FROM producto p1
+WHERE p1.precio > (SELECT AVG(p1.precio) FROM producto p1); 
+
+--************************************subconsultas (ALL y ANY)*************************************
+
+--1
+
+SELECT * FROM  producto p 
+WHERE p.precio >= All (
+SELECT  p.precio FROM  producto p) 
 
 
+SELECT * FROM  producto p 
+WHERE p.precio >= ANY (SELECT MAX(p.precio) FROM producto p)
 
 
+SELECT  * FROM  producto p 
+ORDER BY p.precio DESC
+LIMIT 1
+
+--2
+SELECT * FROM  producto p 
+WHERE p.precio <= All (
+SELECT  p.precio FROM  producto p) 
+
+--3
+
+SELECT * FROM  fabricante f 
+WHERE f.codigo = Any (SELECT p.codigo_fabricante  FROM producto p);   
+
+--4
+SELECT * FROM  fabricante f 
+WHERE f.codigo <> ALL (SELECT p.codigo_fabricante  FROM producto p); 
+
+--************************************subconsultas (in, not in)*************************************
+
+--1
+SELECT * FROM  fabricante f
+WHERE f.codigo IN (SELECT p.codigo_fabricante  FROM producto p)
+
+--************************************exists y not exists*************************************
+
+--1
+SELECT * FROM  fabricante f 
+WHERE EXISTS (SELECT p.codigo_fabricante  FROM producto p, fabricante f1 WHERE f.codigo = p.codigo_fabricante); 
+
+--2
+SELECT * FROM  fabricante f 
+WHERE NOT EXISTS (SELECT p.codigo_fabricante  FROM producto p, fabricante f1 WHERE f.codigo = p.codigo_fabricante); 
 
 
+--************************************subconsultas corelacionadas*************************************
 
-
-SELECT f.nombre, p.nombre FROM fabricante f, producto p 
-WHERE f.codigo = p.codigo_fabricante AND
-f.nombre = 'Asus' or f.nombre ='Hewlett-Packard' OR f.nombre ='Seagate';
+--1
+SELECT f.nombre, p.precio FROM producto p, fabricante f 
+WHERE p.codigo_fabricante= f.codigo AND p.precio >= all (SELECT MAX(p.precio) FROM producto p)
 
 
 
