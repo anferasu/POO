@@ -1,0 +1,55 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!-- Devart (www.devart.com), SQL document design file -->
+<!-- Modifying this generated file will probably render it invalid -->
+<Document>
+  <Properties>
+    <Type>SQL Document Design</Type>
+    <DatabaseProvider>77a9b459-6f15-4675-8e18-cdd88f58e376</DatabaseProvider>
+    <ProviderVersion>2.2.207.0</ProviderVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+  </Properties>
+  <Connection Name="postgres.localhost1">
+    <Category>00000000-0000-0000-0000-000000000000</Category>
+    <ConnectionString>User Id=postgres;Host=localhost;Port=5432;Database=jardineria;Unicode=True;Connection Timeout=15;Default Command Timeout=30;Integrated Security=False</ConnectionString>
+    <Database>jardineria</Database>
+  </Connection>
+  <Views ShowAdditionalViews="False" IsLayoutActiveAttribute="True" MainViewAttribute="Code" MainViewScale="50">
+    <View Name="Code" Active="True" Visible="True">
+      <Data />
+    </View>
+    <View Name="Data" Visible="True" />
+    <View Name="Profiler" Visible="True">
+      <Data>
+        <ProfilerHistory>
+          <ProfilerResult Date="2020-01-24 13:07:26Z" DisplayName="" Duration="0">
+            <SQL>---1.4.4
+--1
+SELECT * FROM pago
+WHERE fecha_pago &gt;='01/01/2008' AND fecha_pago &lt; '01/01/2009'
+
+</SQL>
+            <Properties>
+              <PropertiesRow>
+                <Name>ConnectionString</Name>
+                <Value>User Id=postgres;Host=localhost;Port=5432;Database=jardineria;Unicode=True;Connection Timeout=15;Default Command Timeout=30;Integrated Security=False</Value>
+              </PropertiesRow>
+              <PropertiesRow>
+                <Name>ServerVersion</Name>
+                <Value>12.1</Value>
+              </PropertiesRow>
+              <PropertiesRow>
+                <Name>ProfilingResultTime</Name>
+                <Value>13:07:26 24/01/2020</Value>
+              </PropertiesRow>
+            </Properties>
+            <Elements>
+              <Element Name="---1.4.4&#xD;&#xA;--1&#xD;&#xA;SELECT * FROM pago&#xD;&#xA;WHERE fecha_pago &gt;='01/01/2008' AND fecha_pago &lt; '01/01/2009'&#xD;&#xA;&#xD;&#xA;"><explain xmlns="http://www.postgresql.org/2009/explain"><Query><Plan><Node-Type>Seq Scan</Node-Type><Parallel-Aware>false</Parallel-Aware><Relation-Name>pago</Relation-Name><Schema>public</Schema><Alias>pago</Alias><Startup-Cost>0.00</Startup-Cost><Total-Cost>14.50</Total-Cost><Plan-Rows>2</Plan-Rows><Plan-Width>242</Plan-Width><Actual-Startup-Time>0.030</Actual-Startup-Time><Actual-Total-Time>0.035</Actual-Total-Time><Actual-Rows>5</Actual-Rows><Actual-Loops>1</Actual-Loops><Output><Item>codigo_cliente</Item><Item>forma_pago</Item><Item>id_transaccion</Item><Item>fecha_pago</Item><Item>total</Item></Output><Filter>((pago.fecha_pago &gt;= '2008-01-01'::date) AND (pago.fecha_pago &lt; '2009-01-01'::date))</Filter><Rows-Removed-by-Filter>21</Rows-Removed-by-Filter><Shared-Hit-Blocks>1</Shared-Hit-Blocks><Shared-Read-Blocks>0</Shared-Read-Blocks><Shared-Dirtied-Blocks>0</Shared-Dirtied-Blocks><Shared-Written-Blocks>0</Shared-Written-Blocks><Local-Hit-Blocks>0</Local-Hit-Blocks><Local-Read-Blocks>0</Local-Read-Blocks><Local-Dirtied-Blocks>0</Local-Dirtied-Blocks><Local-Written-Blocks>0</Local-Written-Blocks><Temp-Read-Blocks>0</Temp-Read-Blocks><Temp-Written-Blocks>0</Temp-Written-Blocks></Plan><Planning-Time>1.118</Planning-Time><Triggers></Triggers><Execution-Time>0.059</Execution-Time></Query></explain></Element>
+            </Elements>
+          </ProfilerResult>
+        </ProfilerHistory>
+      </Data>
+    </View>
+    <View Name="PivotGrid" Visible="False" />
+  </Views>
+  <ProfilingMode Enabled="False" />
+</Document>

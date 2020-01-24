@@ -2,6 +2,8 @@
 
 --1
 
+
+
 --2
 
 SELECT f.nombre, p.nombre FROM fabricante f, producto p 
@@ -127,6 +129,9 @@ WHERE p1.precio = (SELECT MIN(p.precio) FROM fabricante f LEFT JOIN producto p O
 SELECT * FROM producto p1 
 WHERE p1.precio >= (SELECT MAX(p.precio) FROM fabricante f LEFT JOIN producto p ON f.codigo = p.codigo_fabricante WHERE f.nombre = 'Lenovo');
 
+SELECT p.nombre FROM producto p WHERE p.precio >= 
+  (SELECT MAX(precio) FROM producto WHERE codigo_fabricante = (SELECT codigo FROM fabricante WHERE nombre ='Lenovo'))
+
 --6
 SELECT * FROM producto p1
 WHERE p1.precio > (SELECT AVG(p1.precio) FROM producto p1); 
@@ -137,21 +142,21 @@ WHERE p1.precio > (SELECT AVG(p1.precio) FROM producto p1);
 
 SELECT * FROM  producto p 
 WHERE p.precio >= All (
-SELECT  p.precio FROM  producto p) 
+SELECT  p.precio FROM  producto p); 
 
 
 SELECT * FROM  producto p 
-WHERE p.precio >= ANY (SELECT MAX(p.precio) FROM producto p)
+WHERE p.precio >= ANY (SELECT MAX(p.precio) FROM producto p);
 
 
 SELECT  * FROM  producto p 
 ORDER BY p.precio DESC
-LIMIT 1
+LIMIT 1;
 
 --2
 SELECT * FROM  producto p 
 WHERE p.precio <= All (
-SELECT  p.precio FROM  producto p) 
+SELECT  p.precio FROM  producto p); 
 
 --3
 
@@ -166,7 +171,7 @@ WHERE f.codigo <> ALL (SELECT p.codigo_fabricante  FROM producto p);
 
 --1
 SELECT * FROM  fabricante f
-WHERE f.codigo IN (SELECT p.codigo_fabricante  FROM producto p)
+WHERE f.codigo IN (SELECT p.codigo_fabricante  FROM producto p);
 
 --************************************exists y not exists*************************************
 
@@ -182,8 +187,28 @@ WHERE NOT EXISTS (SELECT p.codigo_fabricante  FROM producto p, fabricante f1 WHE
 --************************************subconsultas corelacionadas*************************************
 
 --1
+
+SELECT c2.preciomax, c2.nombre, f.nombre FROM
+  (SELECT preciomax, p.nombre, c1.codigo_fabricante FROM
+    (SELECT MAX(precio) AS preciomax, codigo_fabricante FROM producto 
+      GROUP BY codigo_fabricante) c1
+    JOIN producto p ON c1.codigo_fabricante = p.codigo_fabricante
+    WHERE p.precio=c1.preciomax) c2
+    JOIN fabricante f ON f.codigo = c2.codigo_fabricante;
+
+
 SELECT f.nombre, p.precio FROM producto p, fabricante f 
-WHERE p.codigo_fabricante= f.codigo AND p.precio >= all (SELECT MAX(p.precio) FROM producto p)
+WHERE p.precio IN (SELECT MAX(p.precio) FROM producto p WHERE p.codigo_fabricante= f.codigo );
+
+--2
+
+
+
+
+--3
+SELECT p.nombre FROM producto p
+WHERE p.precio in (SELECT MAX(p.precio) FROM producto p, fabricante f WHERE p.codigo_fabricante= f.codigo AND f.nombre = 'Lenovo')
+
 
 
 
