@@ -41,48 +41,75 @@ where d.codigo_pedido is null
 
  --3
 
-select  DISTINCT codigo_oficina  from oficina
+select  DISTINCT codigo_oficina from oficina
  where codigo_oficina <> all 
   (SELECT distinct codigo_oficina from cliente  join empleado 
     on codigo_empleado_rep_ventas = codigo_empleado JOIN pedido 
     ON cliente.codigo_cliente= pedido.codigo_cliente join detalle_pedido 
     on pedido.codigo_pedido = detalle_pedido.codigo_pedido JOIN producto
-    on gama = producto.gama
-where pedido.estado = 'Entregado' and gama_producto='Frutales')
+    on detalle_pedido.codigo_producto = producto.codigo_producto JOIN gama_producto
+    on gama_producto.gama = producto.gama
+where gama_producto.gama ='Frutales')
 
 
 --10
 
-SELECT  * from empleado e
-where e.codigo_empleado NOT in (select c.codigo_empleado_rep_ventas from cliente c)
+select e.*, e2.nombre as Jefe_Asociado from empleado e left join empleado e2
+  on e.codigo_jefe = e2.codigo_empleado where e.codigo_empleado not in (select distinct cliente.codigo_empleado_rep_ventas from cliente)
+
 
 --1.4.7
   --9
    
-   
-     SELECT d.codigo_producto, COUNT(d.codigo_pedido)
+     SELECT d.codigo_producto, sum(d.cantidad)
     from detalle_pedido d
     GROUP BY d.codigo_producto
-     ORDER BY COUNT(d.codigo_pedido) DESC
+     ORDER BY SUM(d.cantidad) DESC
      LIMIT 20;
 
+--15
 
+  SELECT c2.base_imponible, c2.iva, c2.base_imponible+c2.iva as Total_facturado
+    from (SELECT c1.base_imponible, c1.base_imponible*0.21 as iva FROM
+      (SELECT sum (cantidad*precio_unidad)as base_imponible from detalle_pedido) c1)c2;
+
+  SELECT c1.base_imponible, c1.base_imponible*1.21 as Total_facturado, c1.base_imponible*0.21 as iva
+    from (SELECT sum (cantidad*precio_unidad)as base_imponible from detalle_pedido) c1;
 
 --1.4.8.1
 
-select DISTINCT c.codigo_cliente, c.nombre_cliente from cliente c, pago p 
+select c.codigo_cliente, c.nombre_cliente, c.limite_credito, max(p.total) from cliente c, pago p 
 where c.codigo_cliente = p.codigo_cliente and c.limite_credito > p.total
+GROUP by c.codigo_cliente, c.nombre_cliente, c.limite_credito;
+
+
+select cliente.codigo_cliente, cliente.limite_credito from cliente
+  where limite_credito > (select max(pago.total) from pago
+    where cliente.codigo_cliente=pago.codigo_cliente
+  GROUP by codigo_cliente);
+
+   
 
 --1.4.8.2
 
 select * from detalle_pedido d 
 where d.codigo_producto = any (SELECT p.codigo_producto from producto p where p.cantidad_en_stock = (SELECT min(p.cantidad_en_stock) from producto p))
 
+select producto.nombre from producto
+  where cantidad_en_stock <= all
+  (select producto.cantidad_en_stock from producto)
+ 
+
 
 --1.4.8.3
 
 select e.nombre, e.apellido1, e.puesto from empleado e
 where e.codigo_empleado NOT IN  (SELECT e.codigo_empleado  from cliente c INNER JOIN empleado e on c.codigo_empleado_rep_ventas = e.codigo_empleado) 
+
+select e.nombre, e.apellido1, e.puesto from empleado e
+where e.codigo_empleado NOT IN  (SELECT c.codigo_empleado_rep_ventas  from cliente c)      
+
+
 
 --1.4.8.4
 
