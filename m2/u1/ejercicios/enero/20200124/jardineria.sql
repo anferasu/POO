@@ -61,7 +61,7 @@ select e.*, e2.nombre as Jefe_Asociado from empleado e left join empleado e2
 --1.4.7
   --9
    
-     SELECT d.codigo_producto, sum(d.cantidad)
+    SELECT d.codigo_producto, sum(d.cantidad)
     from detalle_pedido d
     GROUP BY d.codigo_producto
      ORDER BY SUM(d.cantidad) DESC
@@ -113,7 +113,7 @@ where e.codigo_empleado NOT IN  (SELECT c.codigo_empleado_rep_ventas  from clien
 
 --1.4.8.4
 
-SELECT p.codigo_producto from producto p
+SELECT p.nombre from producto p
   where EXISTS (SELECT d.codigo_producto from detalle_pedido d where d.codigo_producto = p.codigo_producto)
 
 --1.4.9
@@ -125,10 +125,12 @@ INNER JOIN oficina o
 on e.codigo_oficina = o.codigo_oficina
 
 --7
+create view oficinasxciudad as
 SELECT o.ciudad, COUNT(e.codigo_empleado) as total_empleados from oficina o
 INNER JOIN empleado e
 on o.codigo_oficina = e.codigo_oficina
 GROUP BY o.ciudad
+
 
 
 SELECT * FROM cliente;
@@ -140,3 +142,25 @@ SELECT * FROM pago;
 SELECT * FROM pedido;
 SELECT * FROM producto;
  
+
+
+/* ejercicio con vistas */
+/*ejercicio original*/
+SELECT c1.base_imponible, c1.base_imponible*1.21 as Total_facturado, c1.base_imponible*0.21 as iva
+    from (SELECT sum (cantidad*precio_unidad)as base_imponible from detalle_pedido) c1;
+
+/*vista creada */
+create or replace view  baseimponible as
+
+SELECT sum (cantidad*precio_unidad)as base_imponible from detalle_pedido
+
+SELECT base_imponible, base_imponible*0.21 as iva, base_imponible*1.21 as total_facturado from baseimponible
+
+
+/*crear schema*/
+
+create schema parapepe;
+
+set search_path = parapepe,
+
+select * from cliente,
