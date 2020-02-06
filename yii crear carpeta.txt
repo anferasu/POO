@@ -1,0 +1,4 @@
+composer create-project --prefer-dist yiisoft/yii2-app-basic ejemployii
+
+
+composer update "se adiciona lpara que carguen las librerias de terceros"
