@@ -1,5 +1,5 @@
 ﻿-- TABLAS
-  DROP TABLE IF EXISTS Directores;
+DROP TABLE IF EXISTS Directores;
 DROP TABLE IF EXISTS Empleados;
 DROP TABLE IF EXISTS Entrevista;
 DROP TABLE IF EXISTS Administrativo;
